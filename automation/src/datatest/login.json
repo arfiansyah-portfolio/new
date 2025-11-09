@@ -1,0 +1,5 @@
+{
+    "loginPage" : "https://opensource-demo.orangehrmlive.com/web/index.php",
+    "username" : "${LOGIN_USERNAME}",
+    "password" : "${LOGIN_PASSWORD}"
+}

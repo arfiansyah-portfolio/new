@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        // --- Target & Module ---
+        "target": "ES2020",
+        "lib": [
+            "ES2021"
+        ], // 👈 PENTING: Perbaikan untuk 'Promise.any'
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        // --- Path & Output ---
+        "outDir": "dist",
+        "rootDir": "src", // 👈 TAMBAHAN: Best practice
+        // --- Interoperabilitas ---
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        // --- Aturan Ketat (Bagus!) ---
+        "strict": true,
+        // --- Tipe ---
+        "types": [
+            "node"
+        ]
+    },
+    "include": [
+        "src", // 👈 Disederhanakan
+        "@types" // 👈 Asumsi ini ada di root proyek
+    ]
+}
