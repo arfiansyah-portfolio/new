@@ -1,15 +1,12 @@
-import { Page } from '@playwright/test';
-import { log } from '../logger/logger'; // Sesuaikan path logger Anda
+import { Page, expect } from '@playwright/test';
+import { log } from '../logger/logger';
 import { Strategy, SmartAssertOptions } from './types';
 import { executeStrategiesParallely } from './core/smart-engine';
 
-/**
- * Smart Assert Visible: Memverifikasi elemen terlihat di halaman.
- * Tes akan GAGAL jika elemen tidak ditemukan dalam timeout.
- */
 export async function smartAssertVisible(
     page: Page,
     labelOrKey: string,
+    scrollIntoView: string = 'center',
     options: SmartAssertOptions = {}
 ) {
     const { exactMatch = true } = options;
@@ -24,13 +21,16 @@ export async function smartAssertVisible(
 
     try {
         await executeStrategiesParallely(page, labelOrKey, 'SmartAssertVisible', strategies, options,
+
             async (locator) => {
-                log.pass(`✅ [AssertVisible] Sukses: Elemen "${labelOrKey}" terlihat.`);
-                // await locator.highlight(); // Opsional: highlight elemen
+                await locator.evaluate((el, blockPosition) => el.scrollIntoView({ block: blockPosition, inline: 'center' }), scrollIntoView, { timeout: 30000 });
+                await expect(locator).toBeVisible();
+
+                log.pass(`[AssertVisible] SUCCESS: Element "${labelOrKey}" found AND is visible.`);
             }
         );
     } catch (error) {
-        log.error(`❌ [AssertVisible] GAGAL: Elemen "${labelOrKey}" TIDAK terlihat.`);
-        throw error; // Lempar error kembali agar tes gagal
+        log.error(`[AssertVisible] FAILED: Element "${labelOrKey}" IS NOT visible.`);
+        throw error;
     }
 }

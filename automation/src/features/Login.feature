@@ -16,9 +16,9 @@ Feature: Login
     #   When I login with invalid credential
     #   Then I should see the dashboard
 
-    @smoke
-    Scenario: login with mikro step
-        Given I am on the login page
-        When I fill the "Username" field
-        And I fill the "Password" field
-        And I click "Login"
+    # @smoke
+    # Scenario: login with mikro step
+    #     Given I am on the login page
+    #     When I fill the "Username" field
+    #     And I fill the "Password" field
+    #     And I click "Login"

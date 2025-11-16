@@ -1,13 +1,12 @@
 module.exports = {
     default: {
-        paths: ["src/features/**/*.feature"],
         require: [
             "src/step-definitions/**/*.ts",
             "src/support/**/*.ts"
         ],
         requireModule: ["ts-node/register"],
         format: [
-            "allure-cucumberjs/reporter"                   // Use summary instead of progress dots
+            "allure-cucumberjs/reporter"
         ],
         formatOptions: {
             resultsDir: "reports/allure-results",

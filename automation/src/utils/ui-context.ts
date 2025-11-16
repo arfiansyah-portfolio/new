@@ -1,14 +1,7 @@
 import { Page, FrameLocator } from '@playwright/test';
-import { log } from '../logger/logger'; // Sesuaikan path logger Anda
+import { log } from '../logger/logger';
 import { SmartFrameOptions } from './types';
 
-/**
- * Smart Get Frame: Menemukan iFrame dan mengembalikan FrameLocator.
- *
- * @example
- * const myFrame = await smartGetFrame(page, '#my-iframe-selector');
- * await smartClick(page, 'Submit Button', { parent: myFrame });
- */
 export async function smartGetFrame(
     page: Page,
     selectorOrName: string,
@@ -18,13 +11,11 @@ export async function smartGetFrame(
     const actionName = `SmartGetFrame [${selectorOrName}]`;
 
     try {
-        // Strategi 1: Cari berdasarkan CSS selector
         const frameLocator = page.frameLocator(selectorOrName);
         await frameLocator.locator('body').waitFor({ state: 'visible', timeout });
         return frameLocator;
 
     } catch (e1) {
-        // Strategi 2: Cari berdasarkan atribut 'name' atau 'id'
         try {
             const frame = page.frame(selectorOrName);
             if (frame) {
@@ -32,10 +23,10 @@ export async function smartGetFrame(
                 await frameLocator.locator('body').waitFor({ state: 'visible', timeout });
                 return frameLocator;
             }
-            throw new Error('Frame tidak ditemukan via name/id');
+            throw new Error('Frame not found via name/id');
         } catch (e2) {
-            log.error(`❌ [${actionName}] GAGAL: iFrame "${selectorOrName}" tidak ditemukan atau dimuat dalam ${timeout}ms.`);
-            throw new Error(`${actionName} Gagal: iFrame tidak dapat ditemukan atau dimuat.`);
+            log.error(`[${actionName}] FAILED: iFrame "${selectorOrName}" not found or loaded within ${timeout}ms.`);
+            throw new Error(`${actionName} Failed: iFrame could not be found or loaded.`);
         }
     }
 }

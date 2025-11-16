@@ -28,3 +28,6 @@ export * from './types';
 
 // Ekspor utilitas highlighter UI
 export * from './ui-highlighter';
+
+// Ekspor utilitas tabel UI
+export * from './ui-table';

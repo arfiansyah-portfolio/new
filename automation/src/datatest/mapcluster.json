@@ -1,0 +1,5 @@
+{
+    "mapClusterPage": "https://www.highcharts.com/docs/maps/marker-clusters",
+    "mapDemoWithOptimalizedKMeansAlgorithm" : "Map demo with optimalized K-Means algorithm",
+    "listCluster" : ["Ripon","York","Bradford","Wakefield","Sheffield","Salford"]
+}

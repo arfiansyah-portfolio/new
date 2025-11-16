@@ -7,9 +7,6 @@ import {
 } from './types';
 import { executeStrategiesParallely } from './core/smart-engine';
 
-/**
- * Smart Fill: Mencoba mengisi nilai ke input field.
- */
 export async function smartFill(
     page: Page,
     labelOrKey: string,
@@ -33,9 +30,6 @@ export async function smartFill(
     });
 }
 
-/**
- * Smart Click: Mencoba mengklik elemen.
- */
 export async function smartClick(
     page: Page,
     labelOrKey: string,
@@ -65,9 +59,6 @@ export async function smartClick(
     });
 }
 
-/**
- * Smart Select: Menangani dropdown standard dan custom (PrimeNG dll).
- */
 export async function smartSelect(
     page: Page,
     labelOrKey: string,
@@ -78,7 +69,6 @@ export async function smartSelect(
     const root = parent || page;
     const actionName = `SmartSelect [${labelOrKey}]`;
 
-    // STRATEGI 1: Cek Standard <select> dulu
     try {
         const selectLocator = root.getByLabel(labelOrKey, { exact: exactMatch }).or(root.locator(`select[name="${labelOrKey}"]`));
         if (await selectLocator.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -87,7 +77,6 @@ export async function smartSelect(
         }
     } catch (ignore) { }
 
-    // STRATEGI 2: Custom Dropdown (Trigger + Option)
     const triggerStrategies: Strategy[] = [
         { name: 'Trigger by Label', locator: (r) => r.getByLabel(labelOrKey, { exact: exactMatch }) },
         { name: 'Trigger by Role Combobox', locator: (r) => r.getByRole('combobox', { name: labelOrKey, exact: exactMatch }) },
@@ -96,10 +85,8 @@ export async function smartSelect(
     ];
 
     await executeStrategiesParallely(page, labelOrKey, `${actionName} [Trigger]`, triggerStrategies, options, async (trigger) => {
-        // 1. Klik Trigger
         await trigger.click({ timeout: 5000, force });
 
-        // 2. Cari & Klik Opsi
         const optionLocators = [
             page.getByRole('option', { name: optionText, exact: exactMatch }),
             page.locator(`.p-dropdown-item:has-text("${optionText}")`),
@@ -113,9 +100,9 @@ export async function smartSelect(
                 await option.scrollIntoViewIfNeeded({ timeout: 2000 });
                 await option.click({ timeout: 3000, force });
                 return;
-            } catch (e) { /* Lanjut ke opsi locator berikutnya */ }
+            } catch (e) { }
         }
 
-        throw new Error(`Trigger terbuka, tetapi opsi "${optionText}" tidak ditemukan.`);
+        throw new Error(`Trigger opened, but option "${optionText}" was not found.`);
     });
 }
