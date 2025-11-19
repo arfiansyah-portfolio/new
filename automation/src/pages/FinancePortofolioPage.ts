@@ -4,13 +4,15 @@ import { requireDatatest, Store } from '../helpers';
 import { smartClick, smartFill, uiTableClickRow, uiTableScroll, uiTableValidateRowExists } from '../utils';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ICustomWorld } from '../support/world';
 const pdfParse = require('pdf-parse');
+    
 
 
 export class FinancePortofolioPage {
 
     tableStock: Locator;
-    constructor(private page: Page) {
+    constructor(private page: Page, private world: ICustomWorld) {
         this.tableStock = page.locator('div.k-grid');
     }
 
@@ -20,10 +22,16 @@ export class FinancePortofolioPage {
         await uiTableScroll(this.tableStock);
 
         await smartClick(page, 'Add new');
+        await page.waitForTimeout(5000);
+        this.world.attachment.screenshot(page, 'AfterClickAddNewStock');
 
         await smartFill(page, 'Filter', newListName);
+        await page.waitForTimeout(5000);
+        this.world.attachment.screenshot(page, 'AfterFillFilter');
 
         await smartClick(page, newListName);
+        await page.waitForTimeout(5000);
+        this.world.attachment.screenshot(page, 'AfterSelectNewStock');
 
         await uiTableValidateRowExists(
             page,
@@ -31,6 +39,7 @@ export class FinancePortofolioPage {
             { 'Symbol': newListName },
             { timeout: 15000 }
         );
+        this.world.attachment.screenshot(page, 'AfterValidateNewStockAdded');
     }
 
     async selectStockRow(stockName: string) {
@@ -41,11 +50,13 @@ export class FinancePortofolioPage {
             this.tableStock,
             { 'Symbol': stockName }
         );
+        await page.waitForTimeout(5000);
     }
 
     async openVirtualized() {
         const page = createLoggedPage(this.page);
         await smartClick(page, 'Virtualized');
+        await page.waitForTimeout(5000);
     }
 
     async ExportVirtualized() {
@@ -55,7 +66,8 @@ export class FinancePortofolioPage {
 
         const downloadPromise = page.waitForEvent('download');
         await smartClick(page, 'Export to PDF');
-
+        this.world.attachment.screenshot(page, 'AfterClickExportToPDF');
+        await page.waitForTimeout(5000);
         const download = await downloadPromise;
 
         const suggestedFilename = 'export.pdf';
@@ -95,5 +107,6 @@ export class FinancePortofolioPage {
         const detailTableLocator = this.tableStock.locator('td.k-table-td.k-detail-cell')
         
         expect(detailTableLocator, 'Detail table should be visible after expanding the row').toBeVisible();
+        await page.waitForTimeout(5000);
     }
 }

@@ -23,6 +23,7 @@
     },
     "include": [
         "src", // 👈 Disederhanakan
-        "@types" // 👈 Asumsi ini ada di root proyek
+        "@types", // 👈 Asumsi ini ada di root proyek
+        "global.d.ts" // 👈 Tambahan untuk file global
     ]
 }

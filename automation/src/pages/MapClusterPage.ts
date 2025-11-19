@@ -2,10 +2,11 @@ import { Page, expect, Locator } from '@playwright/test';
 import { createLoggedPage } from '../helpers/playwright-logger';
 import { requireDatatest, Store } from '../helpers';
 import { log } from '../logger/logger';
+import { ICustomWorld } from '../support/world';
 
 export class MapClusterPage {
     mapLocator: any;
-    constructor(private page: Page) {
+    constructor(private page: Page, private world: ICustomWorld) {
         this.mapLocator = page.frameLocator('iframe[title="Highcharts example"][src*="optimized-kmeans"]');
     }
 
@@ -42,6 +43,7 @@ export class MapClusterPage {
 
 
         Store.carryover.put({ "clusterMarkers": clusterMarkers.sort((a, b) => a - b) });
+        this.world.attachment.json("ClusterMarkers", clusterMarkers.sort((a, b) => a - b));
         log.info(`highest cluster: ${Math.max(...clusterMarkers)}`);
     }
 
@@ -102,6 +104,7 @@ export class MapClusterPage {
         log.info(`Cluster markers found: ${JSON.stringify(clusterMarkers)}`);
         expect(clusterMarkers.sort(), 'The list of cluster markers should match the expected data')
             .toEqual(expectedMarkers.sort());
+            this.world.attachment.text("ClusterMarkersFound", clusterMarkers.join('\n'));
         
     }
 }

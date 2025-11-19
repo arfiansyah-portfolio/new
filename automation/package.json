@@ -5,14 +5,9 @@
   "scripts": {
     "test": "cucumber-js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@playwright/test": "^1.56.1",
     "@types/pg": "^8.15.6",
-    "cucumber-js": "^1.0.0",
     "pdf-parse": "^1.1.1",
     "pdf-parser": "^1.0.5",
     "pg": "^8.16.3"

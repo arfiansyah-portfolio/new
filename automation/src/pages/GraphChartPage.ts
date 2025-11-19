@@ -1,6 +1,7 @@
 import { Page, expect, Locator } from '@playwright/test';
 import { createLoggedPage } from '../helpers/playwright-logger';
 import { requireDatatest, Store } from '../helpers';
+import { ICustomWorld } from "../support/world"
 
 function toCamelCase(str: string): string {
     if (!str) return '';
@@ -12,7 +13,7 @@ function toCamelCase(str: string): string {
 
 export class GraphChartPage {
     graphLocator: Locator;
-    constructor(private page: Page) {
+    constructor(private page: Page, private world: ICustomWorld) {
         this.graphLocator = page.locator('//div[@class="k-chart k-widget"]');
     }
 
@@ -35,6 +36,7 @@ export class GraphChartPage {
         }
 
         Store.carryover.put({ "teamMap": Object.fromEntries(teamColorMap) });
+        this.world.attachment.json("TeamColorMap", Object.fromEntries(teamColorMap));
     }
 
     async mappingPeriod() {
@@ -73,6 +75,7 @@ export class GraphChartPage {
         }
 
         Store.carryover.put({ "periode": Object.fromEntries(monthIndexMap) });
+        this.world.attachment.json("PeriodeMap", Object.fromEntries(monthIndexMap));
 
         expect(monthIndexMap.size, 'X-Axis Map (Month -> Index) should not be empty')
             .toBeGreaterThan(0);
@@ -136,6 +139,11 @@ export class GraphChartPage {
 
             expect(normalizedTooltipValue, 'Value in tooltip (after normalization) should match the aria-label')
                 .toEqual(normalizedExpectedValue);
+
+            await this.world.attachment.screenshot(
+                this.page,
+                "GraphTooltip_" + teamName + "_" + monthKey
+            );
 
             await page.mouse.move(0, 0);
             await expect(tooltipLocator).not.toBeVisible();

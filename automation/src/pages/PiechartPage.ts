@@ -3,6 +3,7 @@ import { createLoggedPage } from '../helpers/playwright-logger';
 import { smartFill, smartClick } from '../utils';
 import { log } from '../logger/logger';
 import { requireDatatest, Store } from '../helpers';
+import { ICustomWorld } from "../support/world"
 
 interface Point {
     x: number;
@@ -70,7 +71,7 @@ function parseLabelText(labelText: string): { ageGroup: string; percentage: stri
 export class PiechartPage {
     iFrameLocator: any;
 
-    constructor(private page: Page) {
+    constructor(private page: Page, private world: ICustomWorld) {
         this.iFrameLocator = page.frameLocator('.demo-module--demoFrame--dba2a');
     }
 
@@ -103,6 +104,7 @@ export class PiechartPage {
             }
         }
         Store.carryover.put({ ageGroupMap: Object.fromEntries(ageGroupMap) });
+        this.world.attachment.json("AgeGroupMap", Object.fromEntries(ageGroupMap));
         log.debug(`Datatest snapshot: ${JSON.stringify(Store.carryover.get('ageGroupMap'), null, 2)}`);
     }
 
@@ -134,6 +136,7 @@ export class PiechartPage {
             }
         }
         Store.carryover.put({ ageGroupPercentages: Object.fromEntries(ageGroupPercentages) });
+        this.world.attachment.json("AgeGroupPercentages", Object.fromEntries(ageGroupPercentages));
         log.debug(`Datatest snapshot: ${JSON.stringify(Store.carryover.get('ageGroupPercentages'), null, 2)}`);
         log.debug(`All carryover data: ${JSON.stringify(Store.carryover.getAll(), null, 2)}`);
     }
@@ -184,6 +187,8 @@ export class PiechartPage {
                     log.error(`Actual  : ${actualPercentage}`);
                     await expect.soft(actualPercentage, `Percentage for "${ageGroup}" should be ${expectedPercentage}`)
                         .toBe(expectedPercentage);
+                    await this.world.attachment.text(`Mismatch for ${ageGroup}`,
+                        `Expected: ${expectedPercentage}\nActual  : ${actualPercentage}`);
                 }
             } else {
                 log.warn(`Found an unexpected label in chart: "${ageGroup}" (${actualPercentage})`);
